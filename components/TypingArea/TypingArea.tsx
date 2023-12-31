@@ -38,7 +38,7 @@ const TypingArea = () => {
     const typed = e.target.value;
     const typedSplit = typed.split("");
     // console.log(typed.length)
-    console.log(typedSplit[typed.length-1])
+    // console.log(typedSplit[typed.length-1])
   
 
     setTypedValues((prev) => {
@@ -52,6 +52,20 @@ const TypingArea = () => {
     });
   };
 
+
+  const handleKeys = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Backspace') {
+      e.preventDefault();
+      setTypedValues(prev => {
+        return {
+          ...prev,
+          current: prev.current.slice(0, prev.current.length - 1)
+        }
+      });
+    } else {
+      // console.log(e.key)
+    }
+  }
   useEffect(() => {
     const orginal = textContent.split("");
     const slicedOrginal = orginal.slice(0, typedValues.current.length);
@@ -61,25 +75,42 @@ const TypingArea = () => {
       return typedValue === slicedOrginal[index];
     });
   
-    console.log(isSame ? "Typed text matches original" : "Typed text does not match original");
-    console.log(slicedOrginal)
-    console.log(typedValues.current)
+    // console.log(isSame ? "Typed text matches original" : "Typed text does not match original");
+    // console.log(slicedOrginal)
+    // console.log(typedValues.current)
+    if(isSame){
+      setTypedValues(prev => {
+        return {
+          ...prev,
+          correct: slicedTyped,
+          // wrong: []
+        }
+      })
+    }else{
+      setTypedValues(prev => {
+        return {
+          ...prev,
+          // correct: [],
+          wrong: slicedTyped
+        }
+      })
+    }
+
+
   },[typedValues.current, textContent]);
 
   return (
     <div className="w-1/2 flex justify-center items-center relative z-0">
-      <div className="w-full h-full text-3xl bg-transparent z-10 text_area p-6 absolute text-white"></div>
+      <div className="w-full h-full text-3xl bg-transparent z-10 text_area p-6 absolute text-white">
+        {typedValues.current.map((char, index) => <span className={char === typedValues.correct[index] ? 'text-green-500' : 'bg-red-500' } >{char === typedValues.correct[index] ? typedValues.correct[index] : typedValues.wrong[index]}</span>)}
+      </div>
       <Textarea
         className="resize-none w-full h-full text-3xl bg-transparent z-10 text-transparent text_area p-6 absolute"
         onChange={handleTyping}
         onBlur={handleFocus}
         ref={textAreaRef}
-        onKeyDown={(e) => e.key === 'Backspace' && setTypedValues(prev => {
-          return {
-            ...prev,
-            current: prev.current.slice(0, prev.current.length - 1)
-          }
-        })}
+        onKeyDown={handleKeys}
+        value={''}
       />
       <TextShade />
       <Blur isFocused={isFocused} handleFocus={handleFocus} />
