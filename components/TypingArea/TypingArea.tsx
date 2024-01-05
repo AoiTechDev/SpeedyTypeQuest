@@ -70,13 +70,13 @@ const TypingArea = () => {
     const orginal = textContent.split("");
     const slicedOrginal = orginal.slice(0, typedValues.current.length);
     const slicedTyped = typedValues.current.slice(0, typedValues.current.length)
-
+    console.log(orginal)
     const isSame = slicedTyped.every((typedValue, index) => {
       return typedValue === slicedOrginal[index];
     });
   
     // console.log(isSame ? "Typed text matches original" : "Typed text does not match original");
-    // console.log(slicedOrginal)
+    console.log(slicedOrginal)
     // console.log(typedValues.current)
     if(isSame){
       setTypedValues(prev => {
